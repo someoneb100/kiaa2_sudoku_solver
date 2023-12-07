@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    a.setWindowIcon(QIcon(":/path/to/your/icon.png"));
+    a.setWindowIcon(QIcon(":/icon/sudoku.png"));
     SudokuBoard sudokuBoard;
     sudokuBoard.show();
 
