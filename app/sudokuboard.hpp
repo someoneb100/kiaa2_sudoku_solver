@@ -1,6 +1,6 @@
 #pragma once
 
-#include "board.hpp"
+#include "solvethread.hpp"
 
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -16,7 +16,10 @@ public:
     void keyPressEvent(QKeyEvent *event) override;
 
     static const int cellSize = 50;
-    static const int gridSize = 9;
+    static const int gridSize = Board::size;
+
+public slots:
+    void showResult(QSharedDataPointer<Result>);
 
 private slots:
     void solveButtonClicked();

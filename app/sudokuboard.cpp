@@ -1,5 +1,6 @@
 #include "sudokuboard.hpp"
 #include "sudokucell.hpp"
+#include "solvethread.hpp"
 
 #include <QVBoxLayout>
 #include <QGraphicsProxyWidget>
@@ -31,9 +32,30 @@ void SudokuBoard::keyPressEvent(QKeyEvent *event)
     }
 }
 
+void SudokuBoard::showResult(QSharedDataPointer<Result> res_ptr)
+{
+    m_button->setEnabled(true);
+    auto& result = res_ptr->m_boards;
+    if(result.empty()){
+        m_label->setStyleSheet("color: red;");
+        m_label->setText("No solutions found!");
+        return;
+    }
+}
+
 void SudokuBoard::solveButtonClicked()
 {
-
+    if(m_board.empty()){
+        m_label->setStyleSheet("color: red;");
+        m_label->setText("Please don't run solve on an empty board :)");
+        return;
+    }
+    m_button->setEnabled(false);
+    m_label->setStyleSheet("color: black;");
+    m_label->setText("Calculating solutions...");
+    auto thread = new SolveThread(m_board, this);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    connect(thread, &SolveThread::solution, this, &SudokuBoard::showResult);
 }
 
 void SudokuBoard::initializeGrid()

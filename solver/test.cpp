@@ -1,9 +1,8 @@
 #include "solver.hpp"
-#include <iostream>
 #include <cassert>
 
 int main() {
-    Board input({
+    Board input1({
         {0, 0, 0,  2, 6, 0,  7, 0, 1},
         {6, 8, 0,  0, 7, 0,  0, 9, 0},
         {1, 9, 0,  0, 0, 4,  5, 0, 0},
@@ -36,8 +35,26 @@ int main() {
     assert((result1.size() == 1));
     assert((result1[0] == expected));
 
-    SudokuSolver solver2(input);
+    SudokuSolver solver2(input1);
     auto result2 = solver2.solution();
     assert((result2.size() == 1));
     assert((result2[0] == expected));
+
+    Board input3({
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+      {9, 9, 0,  0, 0, 0,  0, 0, 0},
+
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+      {0, 0, 0,  0, 0, 0,  0, 0, 0},
+    });
+
+    SudokuSolver solver3(input3);
+    auto result3 = solver3.solution();
+    assert((result3.empty()));
 }

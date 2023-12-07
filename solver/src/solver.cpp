@@ -33,13 +33,18 @@ SudokuSolver::SudokuSolver()
 SudokuSolver::SudokuSolver(const Board& other)
     : SudokuSolver()
 {
-    for(size_t i = 0; i != Board::size; ++i){
-        for(size_t j = 0; j != Board::size; ++j){
-            auto v = other[i][j];
-            if(v != Value::EMPTY){
-                m_dlx->add(fieldToRow(i, j, v));
+    if(other.valid()){
+        for(size_t i = 0; i != Board::size; ++i){
+            for(size_t j = 0; j != Board::size; ++j){
+                auto v = other[i][j];
+                if(v != Value::EMPTY){
+                    m_dlx->add(fieldToRow(i, j, v));
+                }
             }
         }
+    }
+    else {
+        m_solution = std::make_unique<std::vector<Board>>();
     }
 }
 

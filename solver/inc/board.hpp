@@ -25,7 +25,9 @@ public:
     static Board emptyBoard();
 
     bool empty() const;
+    bool valid() const;
     Board& operator=(const Board&);
 private:
+    bool isSubsetValid(const row_t& subset) const;
     void checkBoardT() const;
 };

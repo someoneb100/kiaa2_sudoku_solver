@@ -84,7 +84,7 @@ ColumnNode* HeaderNode::min() const
         current != this;
         current = static_cast<ColumnNode*>(current->m_right)
     ){
-        if(current->m_count == 1) return current;
+        if(current->m_count == 0) return current;
         if(min == nullptr || *current < *min) min = current;
     }
 
