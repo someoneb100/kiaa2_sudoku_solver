@@ -10,7 +10,7 @@ public:
 
     static const int font_size = 18;
 
-    void setNumber(int number);
+    void setNumber(int number, Qt::GlobalColor color = Qt::black);
     void clearNumber();
 
 protected:

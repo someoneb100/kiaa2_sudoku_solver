@@ -37,8 +37,7 @@ void SudokuBoard::showResult(QSharedDataPointer<Result> res_ptr)
     m_button->setEnabled(true);
     auto& result = res_ptr->m_boards;
     if(result.empty()){
-        m_label->setStyleSheet("color: red;");
-        m_label->setText("No solutions found!");
+        errorBoard();
         return;
     }
 }
@@ -56,6 +55,7 @@ void SudokuBoard::solveButtonClicked()
     auto thread = new SolveThread(m_board, this);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     connect(thread, &SolveThread::solution, this, &SudokuBoard::showResult);
+    thread->start();
 }
 
 void SudokuBoard::initializeGrid()
@@ -75,10 +75,10 @@ void SudokuBoard::initializeUI()
     QWidget* widget = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(widget);
 
-    m_button = new QPushButton("Solve");
+    m_button = new QPushButton("Solve", this);
     connect(m_button, &QPushButton::clicked, this, &SudokuBoard::solveButtonClicked);
 
-    m_label = new QLabel;
+    m_label = new QLabel(this);
 
     // Add the button and label to the layout
     layout->addWidget(m_button, 0, Qt::AlignBottom | Qt::AlignLeft);
@@ -90,5 +90,11 @@ void SudokuBoard::initializeUI()
     m_scene->addItem(proxyWidget);
 
     setMinimumSize(sizeHint().width() + padding, sizeHint().height() + padding);
+}
+
+void SudokuBoard::errorBoard()
+{
+    m_label->setStyleSheet("color: red;");
+    m_label->setText("No solutions found!");
 }
 

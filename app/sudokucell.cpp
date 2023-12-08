@@ -18,8 +18,9 @@ SudokuCell::SudokuCell(qreal x, qreal y, qreal width, qreal height, size_t i, si
     m_text->setDefaultTextColor(Qt::black);
 }
 
-void SudokuCell::setNumber(int number)
+void SudokuCell::setNumber(int number, Qt::GlobalColor color)
 {
+    setPen(QPen(color));
     m_text->setPlainText(QString::number(number));
     m_text->setPos(rect().x() + rect().width() / 3 - 1, rect().y() + rect().height() / 5 - 1);
     updateBoard(number);
