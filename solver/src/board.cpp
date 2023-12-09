@@ -48,7 +48,11 @@ bool Board::empty() const
 
 Board &Board::operator=(const Board &other)
 {
-    static_cast<board_t>(*this) = static_cast<board_t>(other);
+    for(size_t i = 0; i != Board::size; ++i){
+        for(size_t j = 0; j != Board::size; ++j){
+            (*this)[i][j] = other[i][j];
+        }
+    }
     return *this;
 }
 

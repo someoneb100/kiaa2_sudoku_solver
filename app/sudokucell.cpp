@@ -20,7 +20,7 @@ SudokuCell::SudokuCell(qreal x, qreal y, qreal width, qreal height, size_t i, si
 
 void SudokuCell::setNumber(int number, Qt::GlobalColor color)
 {
-    setPen(QPen(color));
+    m_text->setDefaultTextColor(color);
     m_text->setPlainText(QString::number(number));
     m_text->setPos(rect().x() + rect().width() / 3 - 1, rect().y() + rect().height() / 5 - 1);
     updateBoard(number);
@@ -45,4 +45,20 @@ void SudokuCell::clearNumber()
 {
     m_text->setPlainText("");
     updateBoard(0);
+}
+
+void SudokuCell::updateCell()
+{
+    auto number = static_cast<int>(m_board[m_i][m_j]);
+    if(number != 0)
+        setNumber(number, (m_text->toPlainText().isEmpty()) ? Qt::green : Qt::black);
+    else
+        clearNumber();
+}
+
+void SudokuCell::errorCell()
+{
+    auto number = static_cast<int>(m_board[m_i][m_j]);
+    if(number != 0)
+        setNumber(number, Qt::red);
 }

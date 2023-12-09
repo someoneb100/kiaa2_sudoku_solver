@@ -12,6 +12,8 @@ public:
 
     void setNumber(int number, Qt::GlobalColor color = Qt::black);
     void clearNumber();
+    void updateCell();
+    void errorCell();
 
 protected:
     void focusInEvent(QFocusEvent*) override;
@@ -21,7 +23,7 @@ private:
     const size_t m_i;
     const size_t m_j;
     Board& m_board;
-    void updateBoard(int number);;
+    void updateBoard(int number);
 
     QGraphicsTextItem *m_text;
 };

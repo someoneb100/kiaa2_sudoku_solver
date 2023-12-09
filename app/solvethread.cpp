@@ -8,7 +8,7 @@ SolveThread::SolveThread(const Board& board, QObject* parent)
 void SolveThread::run()
 {
     SudokuSolver solver(m_board);
-    auto result = solver.solution();
+    auto result = solver.solution(false);
     QSharedDataPointer<Result> res_ptr(new Result(std::move(result)));
     emit solution(res_ptr);
 }

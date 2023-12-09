@@ -40,18 +40,21 @@ void SudokuBoard::showResult(QSharedDataPointer<Result> res_ptr)
         errorBoard();
         return;
     }
+
+    m_board = result[0];
+    m_label->setStyleSheet("color: green;");
+    m_label->setText("Solution found!");
+    for(auto item : items()){
+        auto cell = dynamic_cast<SudokuCell*>(item);
+        if(cell) cell->updateCell();
+    }
 }
 
 void SudokuBoard::solveButtonClicked()
 {
-    if(m_board.empty()){
-        m_label->setStyleSheet("color: red;");
-        m_label->setText("Please don't run solve on an empty board :)");
-        return;
-    }
     m_button->setEnabled(false);
     m_label->setStyleSheet("color: black;");
-    m_label->setText("Calculating solutions...");
+    m_label->setText("Calculating solution...");
     auto thread = new SolveThread(m_board, this);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     connect(thread, &SolveThread::solution, this, &SudokuBoard::showResult);
@@ -60,6 +63,18 @@ void SudokuBoard::solveButtonClicked()
 
 void SudokuBoard::initializeGrid()
 {
+    const int thickLineSpacing = cellSize * 3;
+    for (int i = 1; i < 3; ++i) {
+        QGraphicsLineItem *lineH = new QGraphicsLineItem(0, i * thickLineSpacing, gridSize * cellSize, i * thickLineSpacing);
+        QGraphicsLineItem *lineV = new QGraphicsLineItem(i * thickLineSpacing, 0, i * thickLineSpacing, gridSize * cellSize);
+
+        lineH->setPen(QPen(Qt::black, 3)); // Adjust the thickness as needed
+        lineV->setPen(QPen(Qt::black, 3));
+
+        m_scene->addItem(lineH);
+        m_scene->addItem(lineV);
+    }
+
     for (int i = 0; i < gridSize; ++i) {
         for (int j = 0; j < gridSize; ++j) {
             SudokuCell *cell = new SudokuCell(i * cellSize, j * cellSize, cellSize, cellSize, i, j, m_board);
@@ -96,5 +111,9 @@ void SudokuBoard::errorBoard()
 {
     m_label->setStyleSheet("color: red;");
     m_label->setText("No solutions found!");
+    for(auto item : items()){
+        auto cell = dynamic_cast<SudokuCell*>(item);
+        if(cell) cell->errorCell();
+    }
 }
 

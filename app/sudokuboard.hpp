@@ -32,5 +32,6 @@ private:
 
     void initializeGrid();
     void initializeUI();
+
     void errorBoard();
 };
