@@ -27,6 +27,10 @@ else()
 endif()
 message(STATUS "Benchmark: ${BENCHMARK_FLAG}")
 if(${BENCHMARK_FLAG})
+    list(
+        APPEND CMAKE_MODULE_PATH
+        ${PROJECT_SOURCE_DIR}/cmake
+    )
 
     # Collect dataset
     set(DATASET_URL http://magictour.free.fr/topn234)

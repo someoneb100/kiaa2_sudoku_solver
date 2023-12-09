@@ -1,0 +1,4 @@
+[submodule "cmake"]
+	path = cmake
+	url = https://github.com/Kitware/CMake.git
+	branch = release

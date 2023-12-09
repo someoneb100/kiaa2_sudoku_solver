@@ -10,4 +10,4 @@ A Sudoku solver implemented in C++ with a focus on efficiency using the Dancing 
 
 ---
 
-The project supports benchmarking with parallelization using OpenMP. To enable benchmarking during the build, use the flag `-DBENCHMARK=ON` with CMake. Benchmarking utilizes datasets from [Magic Tour](http://magictour.free.fr/topn234), including challenging Sudoku puzzles.
+The project supports benchmarking with parallelization using OpenMP. Before building the project, make sure to initialize and update the submodules by running the command `git submodule update --recursive`. To enable benchmarking during the build, use the flag `-DBENCHMARK=ON` with CMake. Benchmarking utilizes datasets from [Magic Tour](http://magictour.free.fr/topn234), including challenging Sudoku puzzles.
