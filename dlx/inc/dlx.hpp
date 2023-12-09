@@ -14,10 +14,10 @@ public:
     const size_t m_row_size;
     const size_t m_column_size;
 
-    matrix_t search();
+    matrix_t search(bool find_all = true);
     void add(size_t row_id);
 private:
-    void search_help(matrix_t& solutions, solution_t& current_solution, size_t depth);
+    bool search_help(matrix_t& solutions, solution_t& current_solution, bool find_all);
 
     HeaderNode m_header;
     std::vector<ColumnNode> m_columns;

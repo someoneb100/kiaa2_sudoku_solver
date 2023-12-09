@@ -39,7 +39,7 @@ namespace {
 
     int time_it(SudokuSolver& solver){
         auto t1 = std::chrono::high_resolution_clock::now();
-        solver.solution();
+        solver.solution(false);
         auto t2 = std::chrono::high_resolution_clock::now();
         return std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count();
     }

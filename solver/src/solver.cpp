@@ -48,9 +48,9 @@ SudokuSolver::SudokuSolver(const Board& other)
     }
 }
 
-std::vector<Board> SudokuSolver::solution()
+std::vector<Board> SudokuSolver::solution(bool find_all)
 {
-    solve();
+    solve(find_all);
     return *m_solution;
 }
 
@@ -75,10 +75,10 @@ std::pair<std::pair<size_t, size_t>, Value> SudokuSolver::rowToField(size_t row)
     return {{i, j}, v};
 }
 
-void SudokuSolver::solve()
+void SudokuSolver::solve(bool find_all)
 {
     if(m_solution) return;
-    auto results = m_dlx->search();
+    auto results = m_dlx->search(find_all);
     std::vector<Board> solution;
     solution.reserve(results.size());
     for(auto& result : results){

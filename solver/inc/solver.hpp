@@ -11,13 +11,13 @@ public:
     SudokuSolver();
     SudokuSolver(const Board&);
 
-    std::vector<Board> solution();
+    std::vector<Board> solution(bool find_all = true);
 private:
     static init_matrix_t emptyMatrix();
     static init_matrix_t getEmptyMatrix();
     static size_t fieldToRow(size_t i, size_t j, Value v);
     static std::pair<std::pair<size_t, size_t>, Value> rowToField(size_t row);
-    void solve();
+    void solve(bool find_all);
 
     std::unique_ptr<DLX> m_dlx;
     std::unique_ptr<std::vector<Board>> m_solution;

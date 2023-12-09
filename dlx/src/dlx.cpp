@@ -29,11 +29,11 @@ void DLX::link_nodes(const init_matrix_t& init_matrix)
     }
 }
 
-matrix_t DLX::search()
+matrix_t DLX::search(bool find_all)
 {
     solution_t current_solution;
     matrix_t solutions;
-    search_help(solutions, current_solution, 0);
+    search_help(solutions, current_solution, find_all);
     solutions.shrink_to_fit();
     return solutions;
 }
@@ -53,12 +53,12 @@ void DLX::add(size_t row_id)
     }
 }
 
-void DLX::search_help(matrix_t& solutions, solution_t& current_solution, size_t depth)
+bool DLX::search_help(matrix_t& solutions, solution_t& current_solution, bool find_all)
 {
     if(m_header.done()){
         current_solution.shrink_to_fit();
         solutions.emplace_back(current_solution);
-        return;
+        return !find_all;
     }
     
     auto column = m_header.min();
@@ -69,7 +69,8 @@ void DLX::search_help(matrix_t& solutions, solution_t& current_solution, size_t 
             right->cover();
         }
 
-        search_help(solutions, current_solution, depth+1);
+        bool done = search_help(solutions, current_solution, find_all);
+        if(done) return true;
 
         current_solution.pop_back();
         for(auto left = row->m_left; left != row; left = left->m_left){
@@ -77,6 +78,7 @@ void DLX::search_help(matrix_t& solutions, solution_t& current_solution, size_t 
         }
     }
     column->uncover();
+    return false;
 }
 
 
