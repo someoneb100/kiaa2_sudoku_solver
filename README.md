@@ -3,7 +3,6 @@
 [![Language](https://img.shields.io/badge/language-C%2B%2B-blue.svg)](https://en.cppreference.com/)
 [![Qt](https://img.shields.io/badge/Qt-6-blue.svg)](https://www.qt.io/)
 [![CMake](https://img.shields.io/badge/CMake-3.16-green.svg)](https://cmake.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
 
