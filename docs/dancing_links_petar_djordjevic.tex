@@ -6,6 +6,7 @@
 \usepackage[T2A]{fontenc} % enable Cyrillic fonts
 \usepackage[utf8]{inputenc} % make weird characters work
 \usepackage{graphicx}
+\usepackage{cite}
 
 \usepackage[english,serbian]{babel}
 %\usepackage[english,serbianc]{babel} %ukljuciti babel sa ovim opcijama, umesto gornjim, ukoliko se koristi cirilica
@@ -62,8 +63,13 @@
 \maketitle
 
 \abstract{
-U ovom tekstu je ukratko prikazana osnovna forma seminarskog rada. Obratite pažnju da je pored ove .pdf datoteke, u prilogu i odgovarajuća .tex datoteka, kao i .bib datoteka korišćena za generisanje literature. Na prvoj strani seminarskog rada su naslov, apstrakt i sadržaj, i to sve mora da stane na prvu stranu! Kako bi Vaš seminarski zadovoljio standarde i očekivanja, koristite uputstva i materijale sa predavanja na temu pisanja seminarskih radova. Ovo je samo šablon koji se odnosi na fizički izgled seminarskog rada (šablon koji \emph{morate} da koristite!) kao i par tehničkih pomoćnih uputstava. Pročitajte tekst pažljivo jer on sadrži i važne informacije vezane za zahteve obima i karakteristika seminarskog rada.}
-
+  Ovaj rad istražuje Algoritam igrajućih linkova ({\em Dancing Links Algorithm - DLX}),
+  koji je efikasna metoda za rešavanje problema pokrivanja tačaka, specifično za
+  rešavanje egzaktnih pokrivajućih problema. Algoritam, kojeg je osmislio Donald
+  Knuth \cite{knuth2000dancing}, koristi strukturu podataka poznatu kao igrajući linkovi da bi omogućio
+  brzu i efikasnu manipulaciju matricama pokrivanja. Ova tehnika je naročito pogodna
+  za rešavanje složenih kombinatornih problema kao što je raspoređivanje poslova,
+  rešetke i puzzle igre i slično.
 \tableofcontents
 
 \newpage
@@ -98,15 +104,15 @@ Na svakom mestu u tekstu naglasiti odakle tačno potiču informacije. Uz sve nov
 Naredni primeri ilustruju način uvođenja enlegskih termina kao i citiranje.
 
 \begin{primer}
-Problem zaustavljanja (eng.~{\em halting problem}) je neodlučiv \cite{haltingproblem}.
+Problem zaustavljanja (eng.~{\em halting problem}) je neodlučiv.
 \end{primer}
 
 \begin{primer}
-Za prevođenje programa napisanih u programskom jeziku C može se koristiti GCC kompajler \cite{gcc}.
+Za prevođenje programa napisanih u programskom jeziku C može se koristiti GCC kompajler.
 \end{primer}
 
 \begin{primer}
- Da bi se ispitivala ispravost softvera, najpre je potrebno precizno definisati njegovo ponašanje \cite{laski2009software}. 
+ Da bi se ispitivala ispravost softvera, najpre je potrebno precizno definisati njegovo ponašanje. 
 \end{primer}
 
 Reference koje se koriste u ovom tekstu zadate su u datoteci {\em seminarski.bib}. Prevođenje u pdf format u Linux okruženju može se uraditi na sledeći način:
@@ -292,17 +298,9 @@ Ovde pišem zaključak.
 
 
 \addcontentsline{toc}{section}{Literatura}
-\appendix
 \bibliography{seminarski} 
 \bibliographystyle{plain}
 
-\appendix
-\section{Dodatak}
-Ovde pišem dodatne stvari, ukoliko za time ima potrebe.
-Ovde pišem dodatne stvari, ukoliko za time ima potrebe.
-Ovde pišem dodatne stvari, ukoliko za time ima potrebe.
-Ovde pišem dodatne stvari, ukoliko za time ima potrebe.
-Ovde pišem dodatne stvari, ukoliko za time ima potrebe.
 
 
 \end{document}
