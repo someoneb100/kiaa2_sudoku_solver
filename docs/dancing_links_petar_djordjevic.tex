@@ -55,7 +55,7 @@
 
 \begin{document}
 
-\title{Igrajući linkovi\\ \small{Seminarski rad u okviru kursa\\Konstrukcija i Analiza algoritama 2\\ Matematički fakultet}}
+\title{Igrajući pokazivači\\ \small{Seminarski rad u okviru kursa\\Konstrukcija i Analiza algoritama 2\\ Matematički fakultet}}
 
 \author{Petar Đorđević}
 
@@ -64,30 +64,29 @@
 \maketitle
 
 \abstract{
-  Ovaj rad istražuje Algoritam igrajućih linkova ({\em Dancing Links Algorithm - DLX}),
+  Ovaj rad istražuje Algoritam igrajućih pokazivača ({\em Dancing Links Algorithm - DLX}),
   koji je efikasna metoda za rešavanje problema pokrivanja tačaka, specifično za
   rešavanje problema tačnog omotača. Algoritam, koji je osmislio Donald
   Knut \cite{knuth2000dancing}, omogućava brzu i efikasnu manipulaciju matrica
   pokrivanja. Ova tehnika je naročito pogodna za rešavanje složenih kombinatornih
   problema kao što je raspoređivanje poslova, logičke  rešetke, puzzle i slično.
   U okviru ovog rada, implementiraće se Sudoku rešavač kao konkretan primer primene 
-  Algoritma igrajućih linkova (DLX).
+  Algoritma igrajućih pokazivača (DLX).
 
 \tableofcontents
 
 \newpage
 
 \section{Uvod}
-\label{sec:uvod}
 Problem tačnog pokrivača ({\em Exact Cover Problem}) je klasičan kombinatorni problem odabira podskupova
 iz date kolekcije tako da svaki element univerzalnog skupa bude tačno jednom pokriven \cite{cover}.
 Rešavanje ovog problema ima primenu u raznim oblastima kao što su teorija grafova, optimizacija,
 veštačka inteligencija i računarstvo. Problem tačnog pokrivača je NP-težak, što znači da je izuzetno
 složen za rešavanje, te zahteva najbolji mogući algoritam za efikasno pronalaženje rešenja.
 
-Jedan od najpoznatijih algoritama za rešavanje ovih problema je Algoritam
-igrajućih linkova ({\em Dancing Links Algorithm - DLX}), koji je osmislio Donald Knuth. DLX
-koristi strukturu podataka poznatu kao igrajući linkovi koja optimizuje operacije
+Jedan od najpoznatijih algoritama za rešavanje ovih problema je Algoritam igrajućih
+pokazivača ({\em Dancing Links Algorithm - DLX}), koji je osmislio Donald Knuth. DLX
+koristi strukturu podataka poznatu kao igrajući pokazivači koja optimizuje operacije
 dodavanja, uklanjanja i pretraživanja elemenata u matricama pokrivanja.
 
 Sudoku je popularna logička slagalica koja zahteva popunjavanje 9x9 mreže brojevima od 1 do 9,
@@ -96,7 +95,7 @@ podmreži. Problem rešavanja Sudokua može se preformulisati kao problem tačni
 čini idealnim za primenu DLX-a. Ovo preformulisanje omogućava da se koristi DLX za efikasno
 pronalaženje rešenja, čak i za najteže zagonetke.
 
-Cilj ovog rada je da implementira Sudoku rešavač koristeći Algoritam igrajućih linkova i da
+Cilj ovog rada je da implementira Sudoku rešavač koristeći Algoritam igrajućih pokazivača i da
 demonstrira efikasnost ovog algoritma. Pored toga, rad će evaluirati performanse DLX-a na
 različitim primerima Sudoku zagonetki.
 
@@ -126,6 +125,8 @@ algoritama za rešavanje problema tačnog pokrivača su bazirani na pretraživan
 što su gramzivi algoritmi i algoritmi zasnovani na tačnom pokrivanju kontraprimera ({\em backtracking}).
 Ovi algoritmi kombinuju preciznost i efikasnost kako bi pronašli optimalna rešenja ili dobra približna rešenja
 problema tačnog pokrivača.
+
+\section{Algoritam igrajućih pokazivača}
 
 \section{Slike i tabele}
 \label{slike_i_tabele}
