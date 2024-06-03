@@ -2,7 +2,7 @@ TEX=pdflatex
 BIB=bibtex
 RESULT=dancing_links_petar_djordjevic
 
-$(RESULT).pdf : $(RESULT).tex
+$(RESULT).pdf : $(RESULT).tex seminarski.bib
 	$(TEX) $^
 	$(BIB) $(RESULT).aux
 	$(TEX) $^

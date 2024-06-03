@@ -65,18 +65,12 @@
 \abstract{
   Ovaj rad istražuje Algoritam igrajućih linkova ({\em Dancing Links Algorithm - DLX}),
   koji je efikasna metoda za rešavanje problema pokrivanja tačaka, specifično za
-  rešavanje egzaktnih pokrivajućih problema. Algoritam, kojeg je osmislio Donald
-  Knuth \cite{knuth2000dancing}, koristi strukturu podataka poznatu kao igrajući linkovi da bi omogućio
-  brzu i efikasnu manipulaciju matricama pokrivanja. Ova tehnika je naročito pogodna
-  za rešavanje složenih kombinatornih problema kao što je raspoređivanje poslova,
-  rešetke i puzzle igre i slično.
-
+  rešavanje problema tačnog omotača. Algoritam, koji je osmislio Donald
+  Knut \cite{knuth2000dancing}, omogućava brzu i efikasnu manipulaciju matricama
+  pokrivanja. Ova tehnika je naročito pogodna za rešavanje složenih kombinatornih
+  problema kao što je raspoređivanje poslova, logičke  rešetke, puzzle i slično.
   U okviru ovog rada, implementiraće se Sudoku rešavač kao konkretan primer primene 
-  Algoritma igrajućih linkova (DLX).  Problem rešavanja Sudokua može se preformulisati
-  kao problem egzaktnih pokrivanja, što ga čini idealnim za primenu DLX-a. Korišćenjem
-  DLX-a, Sudoku rešavač može vrlo efikasno pronalaziti rešenja, čak i za najsloženije
-  zagonetke, demonstrirajući snagu i fleksibilnost ovog algoritma u rešavanju kombinatornih
-  problema.
+  Algoritma igrajućih linkova (DLX).
 
 \tableofcontents
 
@@ -84,80 +78,49 @@
 
 \section{Uvod}
 \label{sec:uvod}
+Problem tačnih pokrivača ({\em Exact Cover Problem}) je klasičan kombinatorni problem odabira podskupova
+iz date kolekcije tako da svaki element univerzalnog skupa bude tačno jednom pokriven \cite{cover}.
+Rešavanje ovog problema ima primenu u raznim oblastima kao što su teorija grafova, optimizacija,
+veštačka inteligencija i računarstvo. Problem tačnog pokrivača je NP-težak, što znači da je izuzetno
+složen za rešavanje, te zahteva najbolji mogući algoritam za efikasno pronalaženje rešenja.
 
-Kada budete predavali seminarski rad, imenujete datoteke tako da sadrže redni broj teme, temu seminarskog rada, kao i prezimena članova grupe. Precizna uputstva na temu imenovnja će biti data na formi za predaju seminarskog rada. Predaja seminarskih radova biće isključivo preko veb forme, a NE slanjem mejla. Link na formu će biti dat u okviru obaveštenja na strani kursa. Vodite računa da prilikom predavanja seminarskog rada predate samo one fajlove koji su neophodni za ponovno generisanje pdf datoteke. To znači da pomoćne fajlove, kao što su .log, .out, .blg, .toc, .aux i slično, \textbf{ne treba predavati}.
+Jedan od najpoznatijih algoritama za rešavanje ovih problema je Algoritam
+igrajućih linkova ({\em Dancing Links Algorithm - DLX}), koji je osmislio Donald Knuth. DLX
+koristi strukturu podataka poznatu kao igrajući linkovi koja optimizuje operacije
+dodavanja, uklanjanja i pretraživanja elemenata u matricama pokrivanja.
 
-\section{Osnovna uputstva}
-Vaš seminarski rad mora da sadrži najmanje jednu \textbf{sliku}, najmanje jednu \textbf{tabelu} i najmanje \textbf{sedam referenci} u spisku literature. Najmanje jedna slika treba da bude originalna i da predstavlja neke podatke koje ste Vi osmislili da treba da prezentujete u svom radu. Isto važi i za najmanje jednu tabelu. 	Od referenci, neophodno je imati bar jednu \textbf{knjigu}, bar jedan \textbf{naučni članak} iz odgovarajućeg časopisa i bar jednu adekvatnu \textbf{veb adresu}. 
+Sudoku je popularna logička slagalica koja zahteva popunjavanje 9x9 mreže brojevima od 1 do 9,
+uz poštovanje pravila da se svaki broj mora pojaviti tačno jednom u svakom redu, koloni i 3x3
+podmreži. Problem rešavanja Sudokua može se preformulisati kao problem tačnih pokrivača, što ga
+čini idealnim za primenu DLX-a. Ovo preformulisanje omogućava da se koristi DLX za efikasno
+pronalaženje rešenja, čak i za najteže zagonetke.
 
-\textbf{Dužina seminarskog rada treba da bude od 10 do 12 strana.} Svako prekoračenje ili potkoračenje biće kažnjeno sa odgovarajućim brojem poena. Eventualno, nakon strane 12, može se javiti samo tekst poglavlja \textbf{Dodatak} koji sadrži nekakav dodatni k\^{o}d, ali je svakako potrebno da rad može da se pročita i razume i bez čitanja tog dodatka. 
+Cilj ovog rada je da implementira Sudoku rešavač koristeći Algoritam igrajućih linkova i da
+demonstrira efikasnost ovog algoritma. Pored toga, rad će evaluirati performanse DLX-a na
+različitim primerima Sudoku zagonetki.
 
-Ко жели, може да пише рад ћирилицом. У том случају, неопходно је да су инсталирани одговарајући пакети: texlive-fonts-extra, texlive-latex-extra, texlive-lang-cyrillic, texlive-lang-other. 
+\section{Problem tačnog omotača}
 
-Nemojte koristiti stari način pisanja slova, tj ovo:
-\begin{verbatim}
-\v{s} i \v{c} i \'c ...
-\end{verbatim}
-Koristite direknto naša slova:	
-\begin{verbatim}
-š i č i ć ... 
-\end{verbatim}
+Problem tačnog pokrivača ({\em Exact Cover Problem - ECP}) predstavlja ključnu podvrstu problema
+zadovoljstva ograničenja ({\em Constraint Satisfaction Problems - CSP}), gde se cilj sastoji u
+pronalaženju podskupa elemenata koji tačno pokrivaju dati skup. Svaki podskup se može posmatrati
+kao klauza, a tačno pokrivanje zahteva da svaka klauza bude zadovoljena tačno jednom.
 
+ECP se može definisati na sledeći način: Dat je univerzalni skup \( U \)
+i kolekcija \( S \) podskupova \( U \). Cilj je pronaći podskup \( S' \subseteq S \) takav
+da su svi elementi iz \( U \) tačno jednom pokriveni, odnosno svaki element iz \( U \) pripada
+tačno jednom podskupu iz \( S' \).
 
-\section{Engleski termini i citiranje}	
-\label{sec:termini_i_citiranje}
+Pošto se ECP može reukovati na CSP probleme \cite{reduction} znamo da je to NP-težak problem,
+što i ima smisla intuitivno: da bi se utvrdilo da li dati skup podskupova sadrži tačno pokrivanje,
+potrebno je proveriti sve moguće kombinacije, što može dovesti do eksponencijalnog rasta vremena izvršavanja.
 
-Na svakom mestu u tekstu naglasiti odakle tačno potiču informacije. Uz sve novouvedene termine u zagradi naglasiti od koje engleske reči termin potiče. 
-
-Naredni primeri ilustruju način uvođenja enlegskih termina kao i citiranje.
-
-\begin{primer}
-Problem zaustavljanja (eng.~{\em halting problem}) je neodlučiv.
-\end{primer}
-
-\begin{primer}
-Za prevođenje programa napisanih u programskom jeziku C može se koristiti GCC kompajler.
-\end{primer}
-
-\begin{primer}
- Da bi se ispitivala ispravost softvera, najpre je potrebno precizno definisati njegovo ponašanje. 
-\end{primer}
-
-Reference koje se koriste u ovom tekstu zadate su u datoteci {\em seminarski.bib}. Prevođenje u pdf format u Linux okruženju može se uraditi na sledeći način:
-\begin{verbatim}
-pdflatex TemaImePrezime.tex 
-bibtex TemaImePrezime.aux 
-pdflatex TemaImePrezime.tex 
-pdflatex TemaImePrezime.tex 
-\end{verbatim}
-Prvo latexovanje je neophodno da bi se generisao {\em .aux} fajl. {\em bibtex} proizvodi odgovarajući {\em .bbl} fajl koji se koristi za generisanje literature. 
-Potrebna su dva prolaza (dva puta pdflatex) da bi se reference ubacile u tekst (tj da ne bi ostali znakovi pitanja umesto referenci). Dodavanjem novih referenci potrebno je ponoviti ceo postupak.  
-
-
-
-
-
-
-
-
-
-
-
-Broj naslova i podnaslova je proizvoljan. Neophodni su samo Uvod i Zaključak. Na poglavlja unutar teksta referisati se po potrebi. 
-\begin{primer}
-U odeljku \ref{sec:naslov1} precizirani su osnovni pojmovi, dok su zaključci dati u odeljku \ref{sec:zakljucak}.
-\end{primer}
-
-Još jednom da napomenem da nema razloga da pišete:
-\begin{verbatim}
-\v{s} i \v{c} i \'c ...
-\end{verbatim}
-Možete koristiti srpska slova
-\begin{verbatim}
-š i č i ć ... 
-\end{verbatim}
-
-
+Postoje različiti pristupi rešavanju ECP-a, među kojima su i algoritmi koji koriste tehniku pretraživanja
+unazad, kao što su algoritam tačne pretrage i algoritam podeli pa vladaj. Pored toga, neki od najefikasnijih
+algoritama za rešavanje problema tačnog pokrivača su bazirani na pretraživanju uz upotrebu algoritama pomoću
+heuristika, kao što su gramzivi algoritmi i algoritmi zasnovani na tačnom pokrivanju kontraprimera ({\em backtracking}).
+Ovi algoritmi kombinuju preciznost i efikasnost kako bi pronašli optimalna rešenja ili dobra približna rešenja problema
+tačnog pokrivača.
 
 \section{Slike i tabele}
 \label{slike_i_tabele}
@@ -195,24 +158,6 @@ d &e&f\\ \hline
 \end{table}
 
 \end{primer}
-
-\section{K\^{o}d i paket listings}
-Za ubacivanje koda koristite paket \textbf{listings}:
-\url{https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings}
-
-\begin{primer}
-Primer ubacivanja koda za programski jezik Python dat je kroz listing \ref{simple}. Za neki drugi programski jezik, treba podesiti odgvarajući programski jezik u okviru defnisanja stila.
-\end{primer}
-\begin{lstlisting}[caption={Primer ubacivanja koda u tekst},frame=single, label=simple]
-# This program adds up integers in the command line
-import sys
-try:
-    total = sum(int(arg) for arg in sys.argv[1:])
-    print 'sum =', total
-except ValueError:
-    print 'Please supply integer arguments'
-\end{lstlisting}
-
 
 \section{Prvi naslov}
 \label{sec:naslov1}
