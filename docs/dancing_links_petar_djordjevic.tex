@@ -7,6 +7,7 @@
 \usepackage[utf8]{inputenc} % make weird characters work
 \usepackage{graphicx}
 \usepackage{cite}
+\usepackage{amsmath}
 
 \usepackage[english,serbian]{babel}
 %\usepackage[english,serbianc]{babel} %ukljuciti babel sa ovim opcijama, umesto gornjim, ukoliko se koristi cirilica
@@ -66,7 +67,7 @@
   Ovaj rad istražuje Algoritam igrajućih linkova ({\em Dancing Links Algorithm - DLX}),
   koji je efikasna metoda za rešavanje problema pokrivanja tačaka, specifično za
   rešavanje problema tačnog omotača. Algoritam, koji je osmislio Donald
-  Knut \cite{knuth2000dancing}, omogućava brzu i efikasnu manipulaciju matricama
+  Knut \cite{knuth2000dancing}, omogućava brzu i efikasnu manipulaciju matrica
   pokrivanja. Ova tehnika je naročito pogodna za rešavanje složenih kombinatornih
   problema kao što je raspoređivanje poslova, logičke  rešetke, puzzle i slično.
   U okviru ovog rada, implementiraće se Sudoku rešavač kao konkretan primer primene 
@@ -78,7 +79,7 @@
 
 \section{Uvod}
 \label{sec:uvod}
-Problem tačnih pokrivača ({\em Exact Cover Problem}) je klasičan kombinatorni problem odabira podskupova
+Problem tačnog pokrivača ({\em Exact Cover Problem}) je klasičan kombinatorni problem odabira podskupova
 iz date kolekcije tako da svaki element univerzalnog skupa bude tačno jednom pokriven \cite{cover}.
 Rešavanje ovog problema ima primenu u raznim oblastima kao što su teorija grafova, optimizacija,
 veštačka inteligencija i računarstvo. Problem tačnog pokrivača je NP-težak, što znači da je izuzetno
@@ -102,8 +103,8 @@ različitim primerima Sudoku zagonetki.
 \section{Problem tačnog omotača}
 
 Problem tačnog pokrivača ({\em Exact Cover Problem - ECP}) predstavlja ključnu podvrstu problema
-zadovoljstva ograničenja ({\em Constraint Satisfaction Problems - CSP}), gde se cilj sastoji u
-pronalaženju podskupa elemenata koji tačno pokrivaju dati skup. Svaki podskup se može posmatrati
+zadovoljivosti ograničenja ({\em Constraint Satisfaction Problems - CSP}), gde je cilj
+pronalaženje podskupa elemenata koji tačno pokrivaju dati skup. Svaki podskup se može posmatrati
 kao klauza, a tačno pokrivanje zahteva da svaka klauza bude zadovoljena tačno jednom.
 
 ECP se može definisati na sledeći način: Dat je univerzalni skup \( U \)
@@ -111,16 +112,20 @@ i kolekcija \( S \) podskupova \( U \). Cilj je pronaći podskup \( S' \subseteq
 da su svi elementi iz \( U \) tačno jednom pokriveni, odnosno svaki element iz \( U \) pripada
 tačno jednom podskupu iz \( S' \).
 
-Pošto se ECP može reukovati na CSP probleme \cite{reduction} znamo da je to NP-težak problem,
+\[
+\mathcal{S}' \subseteq \mathcal{S} \quad \wedge \quad \left( \forall S_1, S_2 \in \mathcal{S}', \ S_1 \neq S_2 \implies S_1 \cap S_2 = \emptyset \right) \quad \wedge \quad \bigsqcup_{S' \in \mathcal{S}'} S' = U
+\]
+
+Pošto se ECP može redukovati na CSP probleme \cite{reduction} znamo da je to NP-težak problem,
 što i ima smisla intuitivno: da bi se utvrdilo da li dati skup podskupova sadrži tačno pokrivanje,
 potrebno je proveriti sve moguće kombinacije, što može dovesti do eksponencijalnog rasta vremena izvršavanja.
 
 Postoje različiti pristupi rešavanju ECP-a, među kojima su i algoritmi koji koriste tehniku pretraživanja
 unazad, kao što su algoritam tačne pretrage i algoritam podeli pa vladaj. Pored toga, neki od najefikasnijih
-algoritama za rešavanje problema tačnog pokrivača su bazirani na pretraživanju uz upotrebu algoritama pomoću
-heuristika, kao što su gramzivi algoritmi i algoritmi zasnovani na tačnom pokrivanju kontraprimera ({\em backtracking}).
-Ovi algoritmi kombinuju preciznost i efikasnost kako bi pronašli optimalna rešenja ili dobra približna rešenja problema
-tačnog pokrivača.
+algoritama za rešavanje problema tačnog pokrivača su bazirani na pretraživanju uz upotrebu heuristika, kao
+što su gramzivi algoritmi i algoritmi zasnovani na tačnom pokrivanju kontraprimera ({\em backtracking}).
+Ovi algoritmi kombinuju preciznost i efikasnost kako bi pronašli optimalna rešenja ili dobra približna rešenja
+problema tačnog pokrivača.
 
 \section{Slike i tabele}
 \label{slike_i_tabele}
@@ -173,28 +178,6 @@ Ovde pišem tekst.
 Ovde pišem tekst. 
 
 
-\subsection{Prvi podnaslov}
-\label{subsec:podnaslov1}
-
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-
-\subsection{Drugi podnaslov}
-\label{subsec:podnaslov2}
-
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-
-
 \subsection{... podnaslov}
 \label{subsec:podnaslovN}
 
@@ -204,34 +187,6 @@ Ovde pišem tekst.
 Ovde pišem tekst. 
 Ovde pišem tekst. 
 Ovde pišem tekst. 
-
-\section{n-ti naslov}
-\label{sec:naslovN}
-
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-
-\subsection{... podnaslov}
-\label{subsec:podnaslovK}
-
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-
-\subsection{... podnaslov}
-\label{subsec:podnaslovM}
-
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-
 
 \section{Zaključak}
 \label{sec:zakljucak}
