@@ -8,6 +8,9 @@
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{colortbl}
+\usepackage{tikz}
 
 \usepackage[english,serbian]{babel}
 %\usepackage[english,serbianc]{babel} %ukljuciti babel sa ovim opcijama, umesto gornjim, ukoliko se koristi cirilica
@@ -67,7 +70,7 @@
   Ovaj rad istražuje Algoritam igrajućih pokazivača ({\em Dancing Links Algorithm - DLX}),
   koji je efikasna metoda za rešavanje problema pokrivanja tačaka, specifično za
   rešavanje problema tačnog omotača. Algoritam, koji je osmislio Donald
-  Knut \cite{knuth2000dancing}, omogućava brzu i efikasnu manipulaciju matrica
+  Knut \cite{knuth}, omogućava brzu i efikasnu manipulaciju matrica
   pokrivanja. Ova tehnika je naročito pogodna za rešavanje složenih kombinatornih
   problema kao što je raspoređivanje poslova, logičke  rešetke, puzzle i slično.
   U okviru ovog rada, implementiraće se Sudoku rešavač kao konkretan primer primene 
@@ -115,9 +118,8 @@ tačno jednom podskupu iz \( S' \).
 \mathcal{S}' \subseteq \mathcal{S} \quad \wedge \quad \left( \forall S_1, S_2 \in \mathcal{S}', \ S_1 \neq S_2 \implies S_1 \cap S_2 = \emptyset \right) \quad \wedge \quad \bigsqcup_{S' \in \mathcal{S}'} S' = U
 \]
 
-Pošto se ECP može redukovati na CSP probleme \cite{reduction} znamo da je to NP-težak problem,
-što i ima smisla intuitivno: da bi se utvrdilo da li dati skup podskupova sadrži tačno pokrivanje,
-potrebno je proveriti sve moguće kombinacije, što može dovesti do eksponencijalnog rasta vremena izvršavanja.
+ECP se može svesti na CSP \cite{reduction} na sledeći način: \( S \) predstavlja izbore koje možemo
+napraviti a \( U \) ograničenja nad tim izborima. Pošto je ova redukcija moguća  znamo da je to NP-težak problem.
 
 Postoje različiti pristupi rešavanju ECP-a, među kojima su i algoritmi koji koriste tehniku pretraživanja
 unazad, kao što su algoritam tačne pretrage i algoritam podeli pa vladaj. Pored toga, neki od najefikasnijih
@@ -126,68 +128,111 @@ algoritama za rešavanje problema tačnog pokrivača su bazirani na pretraživan
 Ovi algoritmi kombinuju preciznost i efikasnost kako bi pronašli optimalna rešenja ili dobra približna rešenja
 problema tačnog pokrivača.
 
-\section{Algoritam igrajućih pokazivača}
+\subsection{Matrica pokrivanja}
 
-\section{Slike i tabele}
-\label{slike_i_tabele}
-
-Slike i tabele treba da budu u svom okruženju, sa odgovarajućim naslovima, obeležene labelom da koje omogućava referenciranje. 
-
-\begin{primer} Ovako se ubacuje slika. Obratiti pažnju da je dodato i 
-\begin{verbatim}
-\usepackage{graphicx}
-\end{verbatim}
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[scale=0.75]{panda.jpg}
-\end{center}
-\caption{Pande}
-\label{fig:pande}
-\end{figure}
-
-Na svaku sliku neophodno je referisati se negde u tekstu. Na primer, na slici \ref{fig:pande} prikazane su pande. 
-\end{primer}
-
-\begin{primer} I tabele treba da budu u svom okruženju, i na njih je neophodno referisati se u tekstu. Na primer, u tabeli \ref{tab:tabela1} su prikazana različita poravnanja u tabelama.
-
-\begin{table}[h!]
-\begin{center}
-\caption{Razlčita poravnanja u okviru iste tabele ne treba koristiti jer su nepregledna.}
-\begin{tabular}{|c|l|r|} \hline
-centralno poravnanje& levo poravnanje& desno poravnanje\\ \hline
-a &b&c\\ \hline
-d &e&f\\ \hline
-\end{tabular}
-\label{tab:tabela1}
-\end{center}
+ECP se može predstaviti matricom incidencije: svaki red u matrici predstavlja jedan element iz skupa
+\( S \) dok kolona predstavlja element iz skupa \( U \). U takvoj matrici, \( M_{ij} \) je \( 1 \)
+ukoliko se element \( U_{j} \) nalazi u podskupu \( S_{i} \), a \( 0 \) obratno. ECP se rešava tako
+što se ''uklone'' svi redovi tako da u svakoj koloni postoji tačno jedno polje koje ima vrednost \( 1 \).
+U tabeli \ref{tab:incidencije} možete videti primer matrice incidencije za sledeći problem:\\
+$$U = \{A, B, C, D, E, F, G\}$$
+$$S = \{\{C, E, F\}, \{A, D, G\}, \{B, C, F\}, \{A, D\}, \{B, G\}, \{D, E, G\}\}$$
+$$S' = \{\{C, E, F\}, \{A, D\}, \{B, G\}\}$$
+\begin{table}[htbp]
+  \centering
+  \caption{Primer matrice incidencije}
+  \label{tab:incidencije}
+  \begin{tabular}{|c|*{7}{c|}}
+    \hline
+    A & B & C & D & E & F & G \\
+    \hline
+    \rowcolor{green} 0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+    1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+    0 & 1 & 1 & 0 & 0 & 1 & 0 \\
+    \rowcolor{green} 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+    \rowcolor{green} 0 & 1 & 0 & 0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+    \hline
+  \end{tabular}
 \end{table}
 
-\end{primer}
+Ovakva matrica se zove matrica pokrivanja. Pretraga matrice pokrivanja za ECP često može biti spora zbog
+činjenice da se moraju pretraživati sva polja matrice kako bi se pronašla ona koja sadrže 1. Kako se matrica
+pokrivanja često sastoji od većeg broja redova i kolona, mnogo vremena se može potrošiti na pretragu polja
+koja sadrže 0 pre nego što se dođe do onih koja sadrže 1. Ovo može usporiti izvršavanje algoritma za rešavanje
+ECP-a, posebno u slučaju kada matrica pokrivanja ima velike dimenzije.
 
-\section{Prvi naslov}
-\label{sec:naslov1}
+\section{Algoritam igrajućih pokazivača}
+
+Algoritam igrajućih pokazivača ({\em Dancing Links Algorithm - DLX}), poznatiji kao ''Algoritam X'', je
+efikasan algoritam, definisan od strane Donalda Knutha u radu objavljenom 2000. godine \cite{knuth},
+koji se koristi za rešavanje ECS-a i sličnih kombinatornih problema. Ovaj algoritam koristi specifičnu
+strukturu podataka nazvanu igrajući  pokazivači koja korišćenjem dvostruko povezanih listi optimizuje
+operacija dodavanja, uklanjanja i pretraživanja elemenata u matricama pokrivanja. Zasnovana je na ideji
+da se optimizuje pretraga matrice pokrivanja tako što se uvede matrica dvostruko uvezanih listi i time
+eliminiše obilazak polja u matrici koja imaju vrednost \( 0 \).
+
+\subsection{Operacije nad dvostruko ulančanim listama}
+
+Neka je \( x \) pokazivač na element dvostruko ulančane liste. Takođe, neka \( L[x] \) i \( R[x] \)
+predstavljaju pokazivač na element levo, odnosno desno od \( x \). Možemo definisati dve operacije:
+
+\[
+\begin{aligned}
+&link(x) \vcentcolon = L[R[x]] = L[x]; R[L[x]] = R[x]\\
+&unlink(x) \vcentcolon = L[R[x]] = x; R[L[x]] = x
+\end{aligned}
+\]
+
+Operacija \( link(x) \) uklanja element iz liste, dok ga \( unlink(x) \) vraća u listu ukoliko
+je prethodno izbačen, a u suprotnom ne radi ništa. Uzastopno izvršavanje \( link(x) \) pa \( unlink(x) \)
+vraća listu u prvobitno stanje, i obe operacije su idempotentne (kod uzastopnih poziva iste operacije nad
+istim elementom, samo prvi može promeniti listu, naredni pozivi ne rade ništa).
+
+Usled gore navedenih osobina, dvostruko ulančane liste su pogodne za pamćenje stanja i simulaciju backtrackinga.
+
+\subsection{Struktura igrajućih linkova}
+Osnovna ideja ovog algoritma je korišćenje cikličnih dvostruko ulančanih listi kako bi se predstavila
+matrica pokrivanja. Matrica se formira tako što se svaki red predstavlja jednim elementom koji treba
+pokriti, a svaka kolona predstavlja jedan mogući način da se taj element pokrije. Cilj je da se odabere
+kombinacija kolona (elementi) koja pokriva sve redove, pri čemu svaki element treba biti pokriven tačno
+jednom. Svaki element u matrici je jedan čvor ciklične liste, a lista se formira ne samo po redovima već
+i po kolonama tako da jedan element pripada zapravo dvema cikličnim dvostruko ulančanim listama: lista
+kolone i lista vrste. Dodatno, matrica obično sadrži i red zaglavlja i cvor koren. Red zaglavlja se
+koristi za identifikaciju kolona u matrici, dok se cvor koren koristi kao ulazna tačka u strukturu
+podataka, omogućavajući jednostavan pristup početnim tačkama pretrage. Na slici \ref{fig:dlx} ilustrovano
+je inicijalno stanje igrajućih linkova primera iz tabele \ref{tab:incidencije}.
+
+\begin{figure}[h!]
+  \begin{center}
+  \includegraphics[scale=0.425]{slike/dlx.png}
+  \end{center}
+  \caption{Ilustacija inicijalnog stanja igrajućih linkova primera iz tabele \ref{tab:incidencije}}
+  \label{fig:dlx}
+\end{figure}
+
+Jedan čvor u ovim listama se obično sastoji od pet polja:
+\begin{itemize}
+  \item \( L[x] \): Pokazivač na levi susedni čvor.
+  \item \( R[x] \): Pokazivač na desni susedni čvor.
+  \item \( U[x] \) : Pokazivač na gornji susedni čvor.
+  \item \( D[x] \): Pokazivač na donji susedni čvor.
+  \item \( C[x] \): Pokazivač na "kolonu" cvora, što predstavlja zaglavlje kolone u matrici.
+\end{itemize}
+
+Pored ovih polja, čvor unutar zaglavlja takođe ima i polje \( size[x] \) koje sadrži broj elemenata u
+koloni, i polje \( name[x] \) koje sadrži labelu (ime) kolone. Ova polja nisu neophoda, ali pojednostavljuju
+implementaciju strukture.
+
+Algoritam DLX koristi backtracking strategiju, gde se prvo odabire jedan od mogućih elemenata (kolona) za
+pokrivanje i proverava se da li je ova kombinacija valjana. Ako jeste, algoritam nastavlja dalje pretragu
+u istom pravcu, inače se vraća korak unazad (backtrack) i bira drugi element za pokrivanje. Ovaj proces se
+ponavlja sve dok se ne pronađe rešenje ili se iscrpe sve mogućnosti. Algoritam se izvodi rekurzivno
+pretragom u dubinu kako bi se obišli svi mogući putevi u pretrazi.
+
+\subsection{Operacije nad igrajućim pokazivačima}
 
 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-
-
-\subsection{... podnaslov}
-\label{subsec:podnaslovN}
-
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
-Ovde pišem tekst. 
 
 \section{Zaključak}
 \label{sec:zakljucak}
