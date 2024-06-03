@@ -52,7 +52,12 @@ int main(int, char** argv){
 
     #pragma omp parallel for
     for(size_t i = 0; i < lines.size(); ++i){
-        Board b = initialize_board(lines[i]);
+        #pragma omp critical
+        {
+            std::cout << "* Solving test " << i << "..." << std::endl;
+        }
+
+	Board b = initialize_board(lines[i]);
 
         SudokuSolver solver(b);
         auto time = time_it(solver);
