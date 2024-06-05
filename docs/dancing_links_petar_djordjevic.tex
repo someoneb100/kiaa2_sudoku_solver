@@ -177,15 +177,28 @@ eliminiše obilazak polja u matrici koja imaju vrednost \( 0 \).
 Neka je \( x \) pokazivač na element dvostruko ulančane liste. Takođe, neka \( L[x] \) i \( R[x] \)
 predstavljaju pokazivač na element levo, odnosno desno od \( x \). Možemo definisati dve operacije:
 
-\[
-\begin{aligned}
-&link(x) \vcentcolon = L[R[x]] = L[x]; R[L[x]] = R[x]\\
-&unlink(x) \vcentcolon = L[R[x]] = x; R[L[x]] = x
-\end{aligned}
-\]
+\begin{minipage}{0.45\textwidth}
+  \[
+  \texttt{hide(x)} \vcentcolon =
+  \begin{cases}
+    L[R[x]] \gets L[x] \\
+    R[L[x]] \gets R[x]
+  \end{cases}
+  \]
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+  \[
+  \texttt{unhide(x)} \vcentcolon =
+  \begin{cases}
+    L[R[x]] \gets x \\
+    R[L[x]] \gets x
+  \end{cases}
+  \]
+\end{minipage}
 
-Operacija \( link(x) \) uklanja element iz liste, dok ga \( unlink(x) \) vraća u listu ukoliko
-je prethodno izbačen, a u suprotnom ne radi ništa. Uzastopno izvršavanje \( link(x) \) pa \( unlink(x) \)
+
+Operacija \( hide(x) \) uklanja element iz liste, dok ga \( unhide(x) \) vraća u listu ukoliko
+je prethodno izbačen, a u suprotnom ne radi ništa. Uzastopno izvršavanje \( hide(x) \) pa \( unhide(x) \)
 vraća listu u prvobitno stanje, i obe operacije su idempotentne (kod uzastopnih poziva iste operacije nad
 istim elementom, samo prvi može promeniti listu, naredni pozivi ne rade ništa).
 
@@ -217,7 +230,7 @@ Jedan čvor u ovim listama se obično sastoji od pet polja:
   \item \( R[x] \): Pokazivač na desni susedni čvor.
   \item \( U[x] \) : Pokazivač na gornji susedni čvor.
   \item \( D[x] \): Pokazivač na donji susedni čvor.
-  \item \( C[x] \): Pokazivač na "kolonu" cvora, što predstavlja zaglavlje kolone u matrici.
+  \item \( C[x] \): Pokazivač na ''kolonu'' čvora, što predstavlja zaglavlje kolone u matrici.
 \end{itemize}
 
 Pored ovih polja, čvor unutar zaglavlja takođe ima i polje \( size[x] \) koje sadrži broj elemenata u
@@ -232,7 +245,80 @@ pretragom u dubinu kako bi se obišli svi mogući putevi u pretrazi.
 
 \subsection{Operacije nad igrajućim pokazivačima}
 
+Oslanjajući se na osobine funkcija  \( hide(x) \) i \( unhide(x) \) koje su malo pre definisane,
+možemo slične funkcije definisati nad čvorovima tako da se mogu izvršavati i horizontalno i vertikalno.
 
+Horizontalni slučaj:\\
+\begin{minipage}{0.45\textwidth}
+  \[
+  \texttt{hhide(x)} \vcentcolon =
+  \begin{cases}
+    L[R[x]] \gets L[x] \\
+    R[L[x]] \gets R[x]
+  \end{cases}
+  \]
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+  \[
+  \texttt{hunhide(x)} \vcentcolon =
+  \begin{cases}
+    L[R[x]] \gets x \\
+    R[L[x]] \gets x
+  \end{cases}
+  \]
+\end{minipage}\\
+
+Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih elemenata u koloni:\\
+  \begin{minipage}{0.45\textwidth}
+  \[
+  \texttt{vhide(x)} \vcentcolon =
+  \begin{cases}
+    U[D[x]] \gets U[x] \\
+    D[U[x]] \gets D[x] \\
+    C[x] \gets C[x] - 1
+  \end{cases}
+  \]
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+  \[
+  \texttt{vunhide(x)} \vcentcolon =
+  \begin{cases}
+    U[D[x]] \gets x \\
+    D[U[x]] \gets x \\
+    C[x] \gets C[x] + 1
+  \end{cases}
+  \]
+  \end{minipage}\\
+
+===========
+
+
+\[
+\texttt{cover(x)} =
+\begin{cases} 
+\text{For } (p \gets D[x]; \quad p \neq x; \quad p \gets D[p])\\
+\quad \quad \texttt{hide(p)}\\
+\texttt{link(x)}
+\end{cases}
+\]
+
+\[
+\texttt{uncover(x)} =
+\begin{cases} 
+\texttt{unlinkh(x)} \\
+\text{For } (p \gets U[x]; \quad p \neq x; \quad p \gets U[p]) \\
+\quad \quad \texttt{unhide(p)}
+\end{cases}
+\]
+
+\[
+\texttt{hide(x)} =
+\begin{cases}
+\texttt{link(x)} \\
+\text{For } (p \gets R[x]; \quad p \neq x; \quad p \gets R[p]) \\
+\quad \quad \texttt{vlink(p)}
+\end{cases}
+\]
 
 \section{Zaključak}
 \label{sec:zakljucak}
