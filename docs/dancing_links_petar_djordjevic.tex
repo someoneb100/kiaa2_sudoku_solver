@@ -251,7 +251,7 @@ možemo slične funkcije definisati nad čvorovima tako da se mogu izvršavati i
 Horizontalni slučaj:\\
 \begin{minipage}{0.45\textwidth}
   \[
-  \texttt{hhide(x)} \vcentcolon =
+  \texttt{hideh(x)} \vcentcolon =
   \begin{cases}
     L[R[x]] \gets L[x] \\
     R[L[x]] \gets R[x]
@@ -260,7 +260,7 @@ Horizontalni slučaj:\\
 \end{minipage}
 \begin{minipage}{0.45\textwidth}
   \[
-  \texttt{hunhide(x)} \vcentcolon =
+  \texttt{unhideh(x)} \vcentcolon =
   \begin{cases}
     L[R[x]] \gets x \\
     R[L[x]] \gets x
@@ -271,7 +271,7 @@ Horizontalni slučaj:\\
 Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih elemenata u koloni:\\
   \begin{minipage}{0.45\textwidth}
   \[
-  \texttt{vhide(x)} \vcentcolon =
+  \texttt{hidev(x)} \vcentcolon =
   \begin{cases}
     U[D[x]] \gets U[x] \\
     D[U[x]] \gets D[x] \\
@@ -281,7 +281,7 @@ Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih eleme
 \end{minipage}
 \begin{minipage}{0.45\textwidth}
   \[
-  \texttt{vunhide(x)} \vcentcolon =
+  \texttt{unhidev(x)} \vcentcolon =
   \begin{cases}
     U[D[x]] \gets x \\
     D[U[x]] \gets x \\
@@ -290,36 +290,59 @@ Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih eleme
   \]
   \end{minipage}\\
 
-===========
+  Nakon što smo definisali osnovne operacije, možemo ih koristiti za implementaciju funkcija \texttt{cover} i
+  \texttt{uncover}. Funkcija \texttt{cover(x)} sakriva kolonu \(x\) i sve redove koji je presecaju. Funkcija
+  \texttt{uncover(x)} obnavlja kolonu \(x\) i sve redove koji je presecaju.
 
+  \[
+  \texttt{cover(x)} =
+  \begin{cases}
+  \texttt{hideh(x)} & \\
+  \text{For } (\texttt{p} \gets \texttt{D[x]}; \quad \texttt{p} \neq \texttt{x}; \quad \texttt{p} \gets \texttt{D[p]}) & \\
+  \quad \text{For } (\texttt{r} \gets \texttt{R[p]}; \quad \texttt{r} \neq \texttt{p}; \quad \texttt{r} \gets \texttt{R[r]}) & \\
+  \quad \quad \texttt{hidev(r)} &
+  \end{cases}
+  \]
+  
+  Funkcija \texttt{cover(x)} prvo sakriva kolonu \(x\) pomoću \texttt{hideh(x)}. Zatim prolazi kroz sve redove ispod
+  \(x\) koristeći pokazivač \texttt{p}. Unutar svakog reda, prolazi kroz sve desne elemente koristeći pokazivač
+  \texttt{r} i sakriva ih pomoću \texttt{hidev(r)}.
+  
+  \[
+  \texttt{uncover(x)} =
+  \begin{cases}
+  \text{For } (\texttt{p} \gets \texttt{U[x]}; \quad \texttt{p} \neq \texttt{x}; \quad \texttt{p} \gets \texttt{U[p]}) & \\
+  \quad \text{For } (\texttt{l} \gets \texttt{L[p]}; \quad \texttt{l} \neq \texttt{p}; \quad \texttt{l} \gets \texttt{L[l]}) & \\
+  \quad \quad \texttt{unhidev(l)} & \\
+  \texttt{unhideh(x)} &
+  \end{cases}
+  \]
+  
+  Funkcija \texttt{uncover(x)} prvo prolazi kroz sve redove iznad \(x\) koristeći pokazivač \texttt{p}. Unutar svakog reda, prolazi kroz sve leve elemente koristeći pokazivač \texttt{l} i obnavlja ih pomoću \texttt{unhidev(l)}. Na kraju, obnavlja kolonu \(x\) pomoću \texttt{unhideh(x)}.
 
-\[
-\texttt{cover(x)} =
-\begin{cases} 
-\text{For } (p \gets D[x]; \quad p \neq x; \quad p \gets D[p])\\
-\quad \quad \texttt{hide(p)}\\
-\texttt{link(x)}
-\end{cases}
-\]
+  Sada kada smo definisali osnovne operacije i funkcije \texttt{cover} i \texttt{uncover}, možemo preći na implementaciju samog DLX algoritma. Algoritam koristi rekurzivnu funkciju \texttt{search} koja pokušava da pronađe rešenje problema tačnog pokrivanja.
 
-\[
-\texttt{uncover(x)} =
-\begin{cases} 
-\texttt{unlinkh(x)} \\
-\text{For } (p \gets U[x]; \quad p \neq x; \quad p \gets U[p]) \\
-\quad \quad \texttt{unhide(p)}
-\end{cases}
-\]
+  \[
+    \texttt{search(k)} =
+    \begin{cases}
+    \text{if } \texttt{R[head]} = \texttt{head} \\
+    \quad \text{print solution and return} \\
+    \text{else} \\
+    \quad \texttt{c} \gets \text{choose column} \\
+    \quad \texttt{cover(c)} \\
+    \quad \text{For } (\texttt{r} \gets \texttt{D[c]}; \quad \texttt{r} \neq \texttt{c}; \quad \texttt{r} \gets \texttt{D[r]}) & \\
+    \quad \quad \text{set solution[k] = r} \\
+    \quad \quad \text{For } (\texttt{j} \gets \texttt{R[r]}; \quad \texttt{j} \neq \texttt{r}; \quad \texttt{j} \gets \texttt{R[j]}) & \\
+    \quad \quad \quad \texttt{cover(j)} \\
+    \quad \quad \texttt{search(k+1)} \\
+    \quad \quad \text{For } (\texttt{j} \gets \texttt{L[r]}; \quad \texttt{j} \neq \texttt{r}; \quad \texttt{j} \gets \texttt{L[j]}) & \\
+    \quad \quad \quad \texttt{uncover(j)} \\
+    \quad \texttt{uncover(c)}
+    \end{cases}
+    \]
 
-\[
-\texttt{hide(x)} =
-\begin{cases}
-\texttt{link(x)} \\
-\text{For } (p \gets R[x]; \quad p \neq x; \quad p \gets R[p]) \\
-\quad \quad \texttt{vlink(p)}
-\end{cases}
-\]
-
+    Ova funkcija prvo proverava da li je problem rešen (ako je zaglavlje kolone jedino preostalo). Ako jeste, ispisuje rešenje i vraća se. Ako nije, bira se kolona \(c\) koja će biti pokrivena. Nakon što se kolona \(c\) pokrije, algoritam prolazi kroz sve redove \(r\) u toj koloni i pokušava da pronađe rešenje rekurzivnim pozivima funkcije \texttt{search(k+1)}. Ako se rešenje ne pronađe, kolone se otkrivaju kako bi se ispravile promene.
+  
 \section{Zaključak}
 \label{sec:zakljucak}
 
