@@ -7,13 +7,12 @@
 \usepackage[utf8]{inputenc} % make weird characters work
 \usepackage{graphicx}
 \usepackage{cite}
-\usepackage{amsmath}
+\usepackage{amsmath,calc}
 \usepackage{mathtools}
 \usepackage{colortbl}
 \usepackage{tikz}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{amsmath}
 
 \usepackage[english,serbian]{babel}
 %\usepackage[english,serbianc]{babel} %ukljuciti babel sa ovim opcijama, umesto gornjim, ukoliko se koristi cirilica
@@ -368,15 +367,21 @@ Sudoku tabla se može svesti na problem tačnog pokrivača \cite{sudoku}. Poenta
 matricu pokrivanja. Pošto u svako polje može da se upiše jedan od 9 brojeva, a tabla ima 81 polje, matrica pokrivanja
 ima 729 redova. Uslovi se u kolonama mogu upisati na naredni način:
 \begin{enumerate}
-  \item U svako polje se može upisati samo jedan od 9 brojeva. To treba predstaviti kao ograničenje, što znači da moramo uvesti
-    81 uslov za svako polje, tako da se ne mogu 2 broja upisati u jedno polje.
-  \item Svaki broj se može pojaviti samo jednom u svakom redu. To predstavlja novih 9 uslova, gde red koji predstavlja isti broj
-    u istom redu dobija 1 u tablici. To je dodatnih 81 uslova.
-  \item Svaki broj se može pojaviti samo jednom u svakoj koloni Poput reda, uvodi se 81 uslova za ovo.
-  \item Svaki broj se može pojaviti samo jednom u svakoj podmreži 3x3. Poput prethodnih primera dobija se 81 uslov.
+  \item Svaki broj od 1 do 9 može se pojaviti samo jednom u svakom polju. To zahteva 81 uslov, po jedan za svako polje, kako bi se obezbedilo da ne postoje dva broja u istom polju.
+  \item Svaki broj se mora pojaviti samo jednom u svakom redu. Ovo uvodi 81 uslov za sve redove.
+  \item Svaki broj se mora pojaviti samo jednom u svakoj koloni. Takođe, ovo uvodi 81 uslov za sve kolone.
+  \item Svaki broj se može pojaviti samo jednom u svakoj 3x3 podmreži. Ovo dodaje još 81 uslov za sve podmreže.
 \end{enumerate}
-Ukupno, tablica ograničenja je dimenzije 729x324. 
 
+Ukupno, tablica ograničenja je dimenzije 729x324 predstavljeno kao na slici \ref{fig:tabla}. 
+
+\begin{figure}[h!]
+  \begin{center}
+  \includegraphics[scale=0.325]{slike/sudoku.png}
+  \end{center}
+  \caption{Definisanje uslova sudoku table preko matrice pokrivanja}
+  \label{fig:tabla}
+\end{figure}
 
 
 \section{Zaključak}
