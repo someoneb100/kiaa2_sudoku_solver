@@ -11,6 +11,9 @@
 \usepackage{mathtools}
 \usepackage{colortbl}
 \usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
 
 \usepackage[english,serbian]{babel}
 %\usepackage[english,serbianc]{babel} %ukljuciti babel sa ovim opcijama, umesto gornjim, ukoliko se koristi cirilica
@@ -290,7 +293,8 @@ Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih eleme
   \]
   \end{minipage}\\
 
-===========
+
+Da bi mogao algoritam u potpunosti da se opiše, potrebno je dodati još dve operacije:
 
 
 \[
@@ -311,14 +315,84 @@ Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih eleme
 \end{cases}
 \]
 
-\[
-\texttt{hide(x)} =
-\begin{cases}
-\texttt{link(x)} \\
-\text{For } (p \gets R[x]; \quad p \neq x; \quad p \gets R[p]) \\
-\quad \quad \texttt{vlink(p)}
-\end{cases}
-\]
+
+Mogu se formulisati i dodatne pomoćne funkcije za pokrivanje celog reda i za biranje minimalne kolone (kolona koja ima najmanji broj
+  čvorova unutar sebe), ali zbog različitih potencijalnih implementacija ovde neće biti opisane.
+
+\subsection{Algoritam igrajućih linkova}
+
+Algoritam pretrage strukture igrajućih linkova može se predstaviti rekurzivno (usled sličnosti sa backtrackingom).
+Kada pokrijemo kolonu, uklanjamo sve redove koji su povezani sa tom kolonom jer ih nećemo koristiti u trenutnom rešenju.
+Kada se vratimo iz rekurzije, moramo vratiti te redove nazad kako bismo mogli da razmotrimo druge mogućnosti.
+Izbor kolone sa najmanje čvorova omogućava brže sužavanje pretrage i smanjenje mogućnosti pogrešnih grana u pretrazi.
+
+U pseudokodu, algoritam se može opisati na naredni način:
+
+\begin{algorithm}
+  \caption{Pretraži (Dancing Links Algorithm)}
+  \begin{algorithmic}[1]
+  \Function{Pretraži}{Rešenja, TrenutnoRešenje}
+      \If {SveKolonePokrivene()}
+          \State DodajURešenja(TrenutnoRešenje)
+          \State \Return
+      \EndIf
+      \State Kolona $\gets$ IzaberiKolonuSaNajmanjeČvorova()
+      \State PokrijKolonu(Kolona)
+      \For{Čvor \textbf{in} Kolona}
+          \State DodajRedUTrenutnoRešenje(Čvor)
+          \For{DesniČvor \textbf{in} Čvor.Red}
+              \State PokrijKolonu(DesniČvor.Kolona)
+          \EndFor
+          \State \Call{Pretraži}{Rešenja, TrenutnoRešenje}
+          \State UkloniRedIzTrenutnogRešenja(Čvor)
+          \For{LeviČvor \textbf{in} Čvor.Red}
+              \State OtkrijKolonu(LeviČvor.Kolona)
+          \EndFor
+      \EndFor
+      \State OtkrijKolonu(Kolona)
+  \EndFunction
+  \end{algorithmic}
+  \end{algorithm}
+
+
+Iako biranje kolone sa najmanjim brojem čvorova može delovati kao najefikasnija strategija za pokrivanje u algoritmu igrajućih
+  linkova, često je korisno uvesti element pseudonasumičnosti u izbor kolone. Najčešća metoda je da se, u slučaju kada više kolona
+  ima isti minimalni broj čvorova, izabere jedna kolona nasumično. Alternativno, može se implementirati potpuna pseudonasumičnost,
+  gde se kolone biraju prema unapred definisanoj nasumičnoj strategiji.Uvođenjem nasumičnog rasporeda kolona ili redova u početku
+  algoritma može se poboljšati efikasnost pretrage i smanjiti mogućnost zaglavljivanja u lokalnim minimumima.
+
+\section{Sudoku}
+
+Sudoku je logička igra brojevima koja se igra na mreži od 9x9 kvadrata. Mreža je podeljena u devet manjih kvadrata od 3x3,
+zvanih "podmreže" ili "blokovi". Cilj igre je popuniti prazne kvadrate brojevima od 1 do 9, tako da svaki red, svaka kolona i
+svaka podmreža sadrže sve brojeve od 1 do 9 bez ponavljanja. Igra počinje sa delimično popunjenom mrežom. Brojevi u početnom
+rasporedu ne smeju se menjati.
+\\
+\\
+Ograničenja za popunjavanje mreže:
+\begin{enumerate}
+  \item U svako polje se može upisati samo jedan broj
+  \item Svaki broj se može pojaviti samo jednom u svakom redu
+  \item Svaki broj se može pojaviti samo jednom u svakoj koloni
+  \item Svaki broj se može pojaviti samo jednom u svakoj podmreži 3x3
+\end{enumerate}
+
+\subsection{Svođenje na problem tačnog pokrivača}
+
+Sudoku tabla se može svesti na problem tačnog pokrivača \cite{sudoku}. Poenta je definisati ograničenja table kao
+matricu pokrivanja. Pošto u svako polje može da se upiše jedan od 9 brojeva, a tabla ima 81 polje, matrica pokrivanja
+ima 729 redova. Uslovi se u kolonama mogu upisati na naredni način:
+\begin{enumerate}
+  \item U svako polje se može upisati samo jedan od 9 brojeva. To treba predstaviti kao ograničenje, što znači da moramo uvesti
+    81 uslov za svako polje, tako da se ne mogu 2 broja upisati u jedno polje.
+  \item Svaki broj se može pojaviti samo jednom u svakom redu. To predstavlja novih 9 uslova, gde red koji predstavlja isti broj
+    u istom redu dobija 1 u tablici. To je dodatnih 81 uslova.
+  \item Svaki broj se može pojaviti samo jednom u svakoj koloni Poput reda, uvodi se 81 uslova za ovo.
+  \item Svaki broj se može pojaviti samo jednom u svakoj podmreži 3x3. Poput prethodnih primera dobija se 81 uslov.
+\end{enumerate}
+Ukupno, tablica ograničenja je dimenzije 729x324. 
+
+
 
 \section{Zaključak}
 \label{sec:zakljucak}
