@@ -13,6 +13,7 @@
 \usepackage{tikz}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{sudoku}
 
 \usepackage[english,serbian]{babel}
 %\usepackage[english,serbianc]{babel} %ukljuciti babel sa ovim opcijama, umesto gornjim, ukoliko se koristi cirilica
@@ -69,11 +70,11 @@
 \maketitle
 
 \abstract{
-  Ovaj rad istražuje Algoritam igrajućih pokazivača ({\em Dancing Links Algorithm - DLX}),
+  Ovaj rad istražuje {\em Algoritam igrajućih pokazivača} (eng. Dancing Links Algorithm - DLX),
   koji je efikasna metoda za rešavanje problema pokrivanja tačaka, specifično za
   rešavanje problema tačnog omotača. Algoritam, koji je osmislio Donald
-  Knut \cite{knuth}, omogućava brzu i efikasnu manipulaciju matrica
-  pokrivanja. Ova tehnika je naročito pogodna za rešavanje složenih kombinatornih
+  Knuth \cite{knuth}, omogućava brzu i efikasnu manipulaciju binarnih matrica kojima se predstavlja ovaj problem.
+  Ova tehnika je naročito pogodna za rešavanje složenih kombinatornih
   problema kao što je raspoređivanje poslova, logičke  rešetke, puzzle i slično.
   U okviru ovog rada, implementiraće se Sudoku rešavač kao konkretan primer primene 
   Algoritma igrajućih pokazivača (DLX).
@@ -83,33 +84,35 @@
 \newpage
 
 \section{Uvod}
-Problem tačnog pokrivača ({\em Exact Cover Problem}) je klasičan kombinatorni problem odabira podskupova
-iz date kolekcije tako da svaki element univerzalnog skupa bude tačno jednom pokriven \cite{cover}.
+{\em Problem tačnog pokrivača} (eng. Exact Cover Problem - ECP) je klasičan kombinatorni problem odabira podskupova
+iz date kolekcije tako da svaki element univerzalnog skupa bude pokriven tačno jednim podskupom \cite{cover}.
 Rešavanje ovog problema ima primenu u raznim oblastima kao što su teorija grafova, optimizacija,
-veštačka inteligencija i računarstvo. Problem tačnog pokrivača je NP-težak, što znači da je izuzetno
+veštačka inteligencija i računarstvo. {\em Matrica pokrivanja} u problemu tačnog omotača predstavlja binarnu matricu
+gde redovi označavaju podskupove, a kolone elemente skupa, sa vrednostima koje pokazuju da li određeni podskup
+sadrži određeni element. Problem tačnog pokrivača je NP-težak, što znači da je izuzetno
 složen za rešavanje, te zahteva najbolji mogući algoritam za efikasno pronalaženje rešenja.
 
-Jedan od najpoznatijih algoritama za rešavanje ovih problema je Algoritam igrajućih
-pokazivača ({\em Dancing Links Algorithm - DLX}), koji je osmislio Donald Knuth. DLX
+Jedan od najpoznatijih algoritama za rešavanje ovog problema je {\em Algoritam igrajućih
+pokazivača} (eng. Dancing Links Algorithm - DLX), koji je osmislio Donald Knuth. DLX
 koristi strukturu podataka poznatu kao igrajući pokazivači koja optimizuje operacije
 dodavanja, uklanjanja i pretraživanja elemenata u matricama pokrivanja.
 
-Sudoku je popularna logička slagalica koja zahteva popunjavanje 9x9 mreže brojevima od 1 do 9,
-uz poštovanje pravila da se svaki broj mora pojaviti tačno jednom u svakom redu, koloni i 3x3
+{\em Sudoku} je popularna logička slagalica koja zahteva popunjavanje 9$\times$9 mreže brojevima od 1 do 9,
+uz poštovanje pravila da se svaki broj mora pojaviti tačno jednom u svakom redu, koloni i 3$\times$3
 podmreži. Problem rešavanja Sudokua može se preformulisati kao problem tačnih pokrivača, što ga
 čini idealnim za primenu DLX-a. Ovo preformulisanje omogućava da se koristi DLX za efikasno
 pronalaženje rešenja, čak i za najteže zagonetke.
 
-Cilj ovog rada je da implementira Sudoku rešavač koristeći Algoritam igrajućih pokazivača i da
-demonstrira efikasnost ovog algoritma. Pored toga, rad će evaluirati performanse DLX-a na
+Cilj ovog rada je implementacija Sudoku rešavača koristeći Algoritam igrajućih pokazivača i analiza
+efikasnosti ovog algoritma. Pored toga, u radu će biti data evaluacija performansi DLX-a na
 različitim primerima Sudoku zagonetki.
 
 \section{Problem tačnog omotača}
 
-Problem tačnog pokrivača ({\em Exact Cover Problem - ECP}) predstavlja ključnu podvrstu problema
-zadovoljivosti ograničenja ({\em Constraint Satisfaction Problems - CSP}), gde je cilj
-pronalaženje podskupa elemenata koji tačno pokrivaju dati skup. Svaki podskup se može posmatrati
-kao klauza, a tačno pokrivanje zahteva da svaka klauza bude zadovoljena tačno jednom.
+{\em Problem tačnog pokrivača} (eng. Exact Cover Problem - ECP) predstavlja ključnu podvrstu {\em problema
+zadovoljivosti ograničenja} (eng. Constraint Satisfaction Problems - CSP), gde je cilj pronaći podskupove
+koji sadrže svaki element skupa bez preklapanja. Svaki podskup se može posmatrati
+kao klauza, a tačno pokrivanje zahteva da svaki literal bude zadovoljena tačno jednom.
 
 ECP se može definisati na sledeći način: Dat je univerzalni skup \( U \)
 i kolekcija \( S \) podskupova \( U \). Cilj je pronaći podskup \( S' \subseteq S \) takav
@@ -124,9 +127,9 @@ ECP se može svesti na CSP \cite{reduction} na sledeći način: \( S \) predstav
 napraviti a \( U \) ograničenja nad tim izborima. Pošto je ova redukcija moguća  znamo da je to NP-težak problem.
 
 Postoje različiti pristupi rešavanju ECP-a, među kojima su i algoritmi koji koriste tehniku pretraživanja
-unazad, kao što su algoritam tačne pretrage i algoritam podeli pa vladaj. Pored toga, neki od najefikasnijih
+unazad, kao što su algoritam iscrpne pretrage i algoritam podeli pa vladaj. Pored toga, neki od najefikasnijih
 algoritama za rešavanje problema tačnog pokrivača su bazirani na pretraživanju uz upotrebu heuristika, kao
-što su gramzivi algoritmi i algoritmi zasnovani na tačnom pokrivanju kontraprimera ({\em backtracking}).
+što su gramzivi algoritmi i algoritmi najmanjeg preklapanja.
 Ovi algoritmi kombinuju preciznost i efikasnost kako bi pronašli optimalna rešenja ili dobra približna rešenja
 problema tačnog pokrivača.
 
@@ -135,7 +138,7 @@ problema tačnog pokrivača.
 ECP se može predstaviti matricom incidencije: svaki red u matrici predstavlja jedan element iz skupa
 \( S \) dok kolona predstavlja element iz skupa \( U \). U takvoj matrici, \( M_{ij} \) je \( 1 \)
 ukoliko se element \( U_{j} \) nalazi u podskupu \( S_{i} \), a \( 0 \) obratno. ECP se rešava tako
-što se ''uklone'' svi redovi tako da u svakoj koloni postoji tačno jedno polje koje ima vrednost \( 1 \).
+što se ”uklone” neki redovi matrice tako da u svakoj koloni ostane tačno jedno polje koje ima vrednost \( 1 \).
 U tabeli \ref{tab:incidencije} možete videti primer matrice incidencije za sledeći problem:\\
 $$U = \{A, B, C, D, E, F, G\}$$
 $$S = \{\{C, E, F\}, \{A, D, G\}, \{B, C, F\}, \{A, D\}, \{B, G\}, \{D, E, G\}\}$$
@@ -222,7 +225,7 @@ je inicijalno stanje igrajućih linkova primera iz tabele \ref{tab:incidencije}.
   \begin{center}
   \includegraphics[scale=0.425]{slike/dlx.png}
   \end{center}
-  \caption{Ilustacija inicijalnog stanja igrajućih linkova primera iz tabele \ref{tab:incidencije}}
+  \caption{Ilustacija inicijalnog stanja igrajućih linkova primera iz tabele \ref{tab:incidencije}} \cite{dancing_links_visualized}
   \label{fig:dlx}
 \end{figure}
 
@@ -236,7 +239,7 @@ Jedan čvor u ovim listama se obično sastoji od pet polja:
 \end{itemize}
 
 Pored ovih polja, čvor unutar zaglavlja takođe ima i polje \( size[x] \) koje sadrži broj elemenata u
-koloni, i polje \( name[x] \) koje sadrži labelu (ime) kolone. Ova polja nisu neophoda, ali pojednostavljuju
+koloni, i polje \( name[x] \) koje sadrži labelu (ime) kolone. Ova polja nisu neophodna, ali pojednostavljuju
 implementaciju strukture.
 
 Algoritam DLX koristi backtracking strategiju, gde se prvo odabire jedan od mogućih elemenata (kolona) za
@@ -247,7 +250,7 @@ pretragom u dubinu kako bi se obišli svi mogući putevi u pretrazi.
 
 \subsection{Operacije nad igrajućim pokazivačima}
 
-Oslanjajući se na osobine funkcija  \( hide(x) \) i \( unhide(x) \) koje su malo pre definisane,
+Oslanjajući se na osobine funkcija  \( hide(x) \) i \( unhide(x) \) koje su prethodno definisane,
 možemo slične funkcije definisati nad čvorovima tako da se mogu izvršavati i horizontalno i vertikalno.
 
 Horizontalni slučaj:\\
@@ -307,7 +310,7 @@ Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih eleme
   \]
   
   Funkcija \texttt{cover(x)} prvo sakriva kolonu \(x\) pomoću \texttt{hideh(x)}. Zatim prolazi kroz sve redove ispod
-  \(x\) koristeći pokazivač \texttt{p}. Unutar svakog reda, prolazi kroz sve desne elemente koristeći pokazivač
+  \(x\) u kojima je vrednost \(1\) koristeći pokazivač \texttt{p}. Unutar svakog reda, prolazi kroz sve desne elemente koristeći pokazivač
   \texttt{r} i sakriva ih pomoću \texttt{hidev(r)}.
   
   \[
@@ -320,7 +323,7 @@ Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih eleme
   \end{cases}
   \]
   
-  Funkcija \texttt{uncover(x)} prvo prolazi kroz sve redove iznad \(x\) koristeći pokazivač \texttt{p}. Unutar svakog reda, prolazi kroz sve leve elemente koristeći pokazivač \texttt{l} i obnavlja ih pomoću \texttt{unhidev(l)}. Na kraju, obnavlja kolonu \(x\) pomoću \texttt{unhideh(x)}.
+  Funkcija \texttt{uncover(x)} prvo prolazi kroz sve redove iznad \(x\) koji su u listi koristeći pokazivač \texttt{p}. Unutar svakog reda, prolazi kroz sve leve elemente iz liste koristeći pokazivač \texttt{l} i obnavlja ih pomoću \texttt{unhidev(l)}. Na kraju, obnavlja kolonu \(x\) pomoću \texttt{unhideh(x)}.
 
   Sada kada smo definisali osnovne operacije i funkcije \texttt{cover} i \texttt{uncover}, možemo preći na implementaciju samog DLX algoritma. Algoritam koristi rekurzivnu funkciju \texttt{search} koja pokušava da pronađe rešenje problema tačnog pokrivanja.
 
@@ -348,9 +351,9 @@ Vertikalni slučaj, proširen činjenicom da zaglavlje prati broj aktivnih eleme
     Iako biranje kolone sa najmanjim brojem čvorova može delovati kao najefikasnija strategija za pokrivanje u algoritmu Igrajućih Linkova, često je korisno uvesti element pseudonasumičnosti u izbor kolone. Najčešća metoda je da se, u slučaju kada više kolona ima isti minimalni broj čvorova, izabere jedna kolona nasumično. Alternativno, može se implementirati potpuna pseudonasumičnost, gde se kolone biraju prema unapred definisanoj nasumičnoj strategiji.
 \section{Sudoku}
 
-Sudoku je logička igra brojevima koja se igra na mreži od 9x9 kvadrata. Mreža je podeljena u devet manjih kvadrata od 3x3,
+Sudoku je logička igra brojevima koja se igra na mreži od 9$\times$9 kvadrata. Mreža je podeljena u devet manjih kvadrata od 3$\times$3,
 zvanih "podmreže" ili "blokovi". Cilj igre je popuniti prazne kvadrate brojevima od 1 do 9, tako da svaki red, svaka kolona i
-svaka podmreža sadrže sve brojeve od 1 do 9 bez ponavljanja. Igra počinje sa delimično popunjenom mrežom. Brojevi u početnom
+svaka podmreža dimenzije 3$\times$3 sadrže sve brojeve od 1 do 9 bez ponavljanja. Igra počinje sa delimično popunjenom mrežom. Brojevi u početnom
 rasporedu ne smeju se menjati.
 
 Ograničenja za popunjavanje mreže:
@@ -358,7 +361,7 @@ Ograničenja za popunjavanje mreže:
   \item U svako polje se može upisati samo jedan broj
   \item Svaki broj se može pojaviti samo jednom u svakom redu
   \item Svaki broj se može pojaviti samo jednom u svakoj koloni
-  \item Svaki broj se može pojaviti samo jednom u svakoj podmreži 3x3
+  \item Svaki broj se može pojaviti samo jednom u svakoj podmreži 3$\times$3
 \end{enumerate}
 
 \subsection{Svođenje na problem tačnog pokrivača}
@@ -370,18 +373,145 @@ ima 729 redova. Uslovi se u kolonama mogu upisati na naredni način:
   \item Svaki broj od 1 do 9 može se pojaviti samo jednom u svakom polju. To zahteva 81 uslov, po jedan za svako polje, kako bi se obezbedilo da ne postoje dva broja u istom polju.
   \item Svaki broj se mora pojaviti samo jednom u svakom redu. Ovo uvodi 81 uslov za sve redove.
   \item Svaki broj se mora pojaviti samo jednom u svakoj koloni. Takođe, ovo uvodi 81 uslov za sve kolone.
-  \item Svaki broj se može pojaviti samo jednom u svakoj 3x3 podmreži. Ovo dodaje još 81 uslov za sve podmreže.
+  \item Svaki broj se može pojaviti samo jednom u svakoj 3$\times$3 podmreži. Ovo dodaje još 81 uslov za sve podmreže.
 \end{enumerate}
 
-Ukupno, tablica ograničenja je dimenzije 729x324 predstavljeno kao na slici \ref{fig:tabla}. 
+Ukupno, tablica ograničenja je dimenzije 729$\times$324 predstavljeno kao na slici \ref{fig:tabla}. 
 
 \begin{figure}[h!]
   \begin{center}
   \includegraphics[scale=0.325]{slike/sudoku.png}
   \end{center}
-  \caption{Definisanje uslova sudoku table preko matrice pokrivanja}
+  \caption{Definisanje uslova sudoku table preko matrice pokrivanja \cite{exact_cover_matrix}}
   \label{fig:tabla}
 \end{figure}
+
+\section{Implementacija}
+
+Ovaj rad je implementiran u C++ programskom jeziku, koristeći Qt6 za grafički korisnički interfejs i OpenMP za paralelizaciju 
+programa za evaluaciju, dok je CMake korišćen
+kao sistem za izgradnju. U okviru implementacije razvijena je biblioteka za DLX algoritam, biblioteka za rešavanje igre Sudoku
+zasnovana na prethodno pomenutoj biblioteci, kao i grafička aplikacija za rešavanje igre Sudoku. Implementiran je i veoma
+jednostavan test jedinice koda.
+
+\subsection{Sistem za izgradnju}
+
+Za proširenje funkcionalnosti CMake-a, projekat koristi CMake repozitorijum napisani od strane firme Kitware \cite{kitware} 
+kao Git submodul.
+Ovaj submodul omogućava dodatne mogućnosti i alate koje nisu dostupne u osnovnoj instalaciji CMake-a, čime se olakšava 
+konfiguracija i izgradnja projekta. Integracija submodula osigurava da su potrebne ekstenzije direktno dostupne unutar
+projekta bez da se kod dodaje direktno na repozitorijum.
+
+Koraci izgradnje:
+
+\begin{itemize}
+  \item Kompilira se DLX biblioteka.
+  \item Kompilira se rešavač za Sudoku.
+  \item Kompilira se grafička aplikacija.
+  \item Ukoliko na sistemu postoji instaliran OpenMP, kompilira se program za evaluaciju performansi.
+  \item Ukoliko postoji veza sa internetom, skidaju se datoteke sa primerima za evaluaciju.
+\end{itemize}
+
+\subsection{Grafički korisnički interfejs}
+
+Grafički korisnički interfejs je minimalistički i jednostavan za korišćenje.
+Sadrži samo tablu sa Sudoku poljima i dugme za pokretanje rešavača, prikazano na slici \ref{fig:app_start}.
+Klikom na polje na tabli, ono se uokviruje u žuto, omogućavajući unos brojeva od 1 do 9, prikazano na slici \ref{fig:app_input}.
+Dugme backspace se koristi za brisanje unesenih brojeva.
+Kada korisnik klikne na dugme za pokretanje, rešavanje sudokua se pokreće u zasebnoj niti kako bi se izbeglo blokiranje GKI-ja.
+Ako je rešenje ispravno, brojevi na praznim mestima se prikazuju u zelenoj boji, kao na slici \ref{fig:app_solve}.
+Ukoliko Sudoku ne može da se reši, brojevi se prikazuju u crvenoj boji, kao na slici \ref{fig:app_error}.
+
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{slike/app_start.png}
+      \caption{GKI pri pokretanju}
+      \label{fig:app_start}
+  \end{minipage}\hfill
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{slike/app_input.png}
+      \caption{Primer upotrebe GKI-ja}
+      \label{fig:app_input}
+  \end{minipage}
+\end{figure}
+
+
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{slike/app_solve.png}
+      \caption{Pronalazak tačnog rešenja}
+      \label{fig:app_solve}
+  \end{minipage}\hfill
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{slike/app_error.png}
+      \caption{Primer koji nema rešenje}
+      \label{fig:app_error}
+  \end{minipage}
+\end{figure}
+
+
+\section{Evaluacija implementacije}
+
+Radi evaluacije performansi, rešavač bez grafičkog korisničkog interfejsa pokrenut je na 5 primera skupa koji se
+nalazi na narednoj adresi: \url{http://magictour.free.fr/topn234}. Pomenuti skup je kolekcija od 234 primera koji se teško rešavaju.
+Da bi se smanjilo vreme izvršavanja cele evaluacije svaki primer pokrenut je na zasebnom jezgru.
+Procesor na kojem su se izvršavale evaluacije: ''12 × AMD Ryzen 5 3600 6-Core Processor''.
+Rezultati se mogu videti u tabeli \ref{tab:result}.Tabla koja je najbrže rešena prikazana je na slici \ref{fig:sudoku_easy}, dok je tabla na slici \ref{fig:sudoku_hard}
+zahtevala ubedljivo najviše vremena da se reši.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|}
+  \hline
+  Primer & Vreme izvršavanja\\ \hline
+  0 & 22s 691ms \\ \hline
+  1 & 26s 186ms \\ \hline
+  2 & 2m 18s 510ms \\ \hline
+  3 & 21m 50s 292ms \\ \hline
+  4 & 28m 3s 774ms \\ \hline
+  \end{tabular}
+  \caption{Example of a Sudoku board}
+\label{tab:result}
+\end{table}
+
+\begin{figure}[h!]
+\begin{sudoku}
+|5| | |7| | |6| | |.
+| | |3|8| | | | | |.
+| | | | | | |2| | |.
+|6|2| |4| | | | | |.
+| | | | | | | |9|1|.
+|7| | | | | | | | |.
+| | | | |3|5| |8| |.
+|4| | | | | |1| | |.
+| | | | |9| | | | |.
+\end{sudoku}
+\caption{Sudoku primer koji je rešen najbrže}
+\label{fig:sudoku_easy}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{sudoku}
+|7| |8| | | |3| | |.
+| | | |2| |1| | | |.
+|5| | | | | | | | |.
+| |4| | | | | |2|6|.
+|3| | | |8| | | | |.
+| | | |1| | | |9| |.
+| |9| |6| | | | |4|.
+| | | | |7| |5| | |.
+| | | | | | | | | |.
+\end{sudoku}
+\caption{Sudoku primer koji je najsporije rešen}
+\label{fig:sudoku_hard}
+\end{figure}
+    
 
 
 \section{Zaključak}
